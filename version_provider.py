@@ -72,8 +72,12 @@ def dynamic_metadata(field: str, settings: dict[str, object] | None = None) -> s
             # This is not exactly how it should be,
             # but works for now if building in a nvidia/cuda image.
             if cuda_version := os.environ.get("CUDA_VERSION"):
-                major, minor, *_ = cuda_version.split(".")
-                backend = f"cu{major}{minor}"
+                cuda_parts = cuda_version.split(".")
+                if len(cuda_parts) >= 2 and all(part.isdigit() for part in cuda_parts[:2]):
+                    major, minor = cuda_parts[:2]
+                    backend = f"cu{major}{minor}"
+                else:
+                    backend = "cuda"
             else:
                 backend = "cuda"
         if backend:
