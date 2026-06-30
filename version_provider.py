@@ -32,7 +32,10 @@ def get_git_commit_id() -> str | None:
         r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, encoding="utf-8")
         if r.returncode == 0:
             _git = r.stdout.strip()
-            git_pin.write_text(_git)
+            try:
+                git_pin.write_text(_git)
+            except OSError:
+                pass
             return _git
 
     if git_pin.exists():
