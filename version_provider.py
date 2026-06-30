@@ -29,8 +29,17 @@ def get_git_commit_id() -> str | None:
     """Get the current git commit hash by running git in the current file's directory."""
 
     if (ROOT / ".git").exists():
-        r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, encoding="utf-8")
-        if r.returncode == 0:
+        try:
+            r = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=ROOT,
+                capture_output=True,
+                encoding="utf-8",
+                timeout=5,
+            )
+        except (OSError, subprocess.SubprocessError):
+            r = None
+        if r is not None and r.returncode == 0:
             _git = r.stdout.strip()
             git_pin.write_text(_git)
             return _git
