@@ -71,8 +71,12 @@ def main() -> int:
         _log(f"output-missing path={out_path}")
         return 0
 
-    with open(out_path, "rb") as f:
-        data = f.read()
+    try:
+        with open(out_path, "rb") as f:
+            data = f.read()
+    except OSError as err:
+        _log(f"read-failed path={out_path} error={err}")
+        return 0
 
     matches = _TMP_PATTERN.findall(data)
     # also probe for raw substrings to distinguish "no .tmp pattern" vs encoding issue
@@ -81,8 +85,12 @@ def main() -> int:
     head = data[:128].hex() if data else ""
     new_data = _TMP_PATTERN.sub(_STABLE_TOKEN, data)
     if new_data != data:
-        with open(out_path, "wb") as f:
-            f.write(new_data)
+        try:
+            with open(out_path, "wb") as f:
+                f.write(new_data)
+        except OSError as err:
+            _log(f"write-failed path={out_path} error={err}")
+            return 0
         _log(f"stripped count={len(matches)} src={cmd[-1]} out={out_path}")
     else:
         _log(f"no-tmp-found src={cmd[-1]} bytes={len(data)} has_uvcache={has_uvcache_bytes} has_tmp={has_tmp_bytes} head={head}")
