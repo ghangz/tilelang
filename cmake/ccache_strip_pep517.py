@@ -36,9 +36,11 @@ _STABLE_TOKEN = b"_pep517"
 
 
 def _find_output_file(args: list[str]) -> str | None:
-    for arg in args:
+    for i, arg in enumerate(args):
         if arg[:3] in ("/Fi", "-Fi") and len(arg) > 3:
             return arg[3:]
+        if arg in ("/Fi", "-Fi") and i + 1 < len(args):
+            return args[i + 1]
     return None
 
 
