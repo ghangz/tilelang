@@ -64,25 +64,25 @@ def test_tilelang_tmp_dir_default_tracks_cache_dir(monkeypatch, tmp_path):
 
 @pytest.mark.parametrize("value", ["1", "true", "TRUE", " yes ", "On"])
 def test_env_bool_helpers_accept_common_truthy_values(monkeypatch, value):
-    desc = _env_var_descriptor("TILELANG_VERBOSE")
+    desc = _env_var_descriptor("TILELANG_DEFAULT_VERBOSE")
     original_forced_value = desc._forced_value
-    _restore_forced_value("TILELANG_VERBOSE", None)
+    _restore_forced_value("TILELANG_DEFAULT_VERBOSE", None)
 
     try:
         monkeypatch.setenv("TILELANG_VERBOSE", value)
         assert tilelang.env.get_default_verbose() is True
     finally:
-        _restore_forced_value("TILELANG_VERBOSE", original_forced_value)
+        _restore_forced_value("TILELANG_DEFAULT_VERBOSE", original_forced_value)
 
 
 @pytest.mark.parametrize("value", ["0", "false", "no", "off", ""])
 def test_env_bool_helpers_reject_common_false_values(monkeypatch, value):
-    desc = _env_var_descriptor("TILELANG_VERBOSE")
+    desc = _env_var_descriptor("TILELANG_DEFAULT_VERBOSE")
     original_forced_value = desc._forced_value
-    _restore_forced_value("TILELANG_VERBOSE", None)
+    _restore_forced_value("TILELANG_DEFAULT_VERBOSE", None)
 
     try:
         monkeypatch.setenv("TILELANG_VERBOSE", value)
         assert tilelang.env.get_default_verbose() is False
     finally:
-        _restore_forced_value("TILELANG_VERBOSE", original_forced_value)
+        _restore_forced_value("TILELANG_DEFAULT_VERBOSE", original_forced_value)
